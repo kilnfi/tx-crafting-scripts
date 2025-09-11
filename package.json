@@ -10,8 +10,12 @@
     "@cosmjs/math": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
     "@cosmjs/stargate": "^0.32.4",
+    "@ton/core": "^0.56.3",
+    "@ton/ton": "^13.11.2",
     "bech32": "^2.0.0",
     "near-api-js": "^5.0.1",
+    "tonweb": "^0.0.66",
+    "tronweb": "^6.0.0",
     "viem": "^2.24.3"
   },
   "devDependencies": {
