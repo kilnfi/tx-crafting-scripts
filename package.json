@@ -1,0 +1,20 @@
+{
+  "name": "tx-crafting-scripts",
+  "version": "1.0.0",
+  "scripts": {
+    "format": "biome check ./src --unsafe --write"
+  },
+  "dependencies": {
+    "@cosmjs/amino": "^0.32.4",
+    "@cosmjs/encoding": "^0.32.4",
+    "@cosmjs/math": "^0.32.4",
+    "@cosmjs/proto-signing": "^0.32.4",
+    "@cosmjs/stargate": "^0.32.4",
+    "near-api-js": "^5.0.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "bun-types": "latest",
+    "typescript": "^5.6.3"
+  }
+}
