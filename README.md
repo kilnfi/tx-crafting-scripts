@@ -1,6 +1,8 @@
 # Transactions crafting scripts
 
-> ⚠️ Kiln is a non-custodial staking provider. As a customer and owner of your assets, it is YOUR responsibility to check and verify all the transactions you are signing. While Kiln provides tooling to help you interact with your stakes (web applications, APIs), Kiln is not responsible for the transactions that you sign.
+# Disclaimer
+
+⚠️ Kiln is a non-custodial staking provider. As a customer and owner of your assets, **it is YOUR responsibility to check and verify all the transactions you are signing**. While Kiln provides tooling to help you interact with your stakes (web applications, APIs, scripts), **Kiln is never responsible for the transactions that you sign.**
 
 Scripts and utilities for crafting raw transactions across multiple blockchain protocols. This repository provides helpers to generate unsigned transactions for common operations (staking, unstaking, etc.). The transactions are returned in serialized form, and you are responsible for signing and broadcasting them yourself.
 
@@ -82,3 +84,12 @@ This repo does not sign or manage keys. Typical flow:
 Sign unsigned_tx_serialized off-device or with your wallet/SDK.
 
 Broadcast the signed transaction to the network.
+
+## Legal disclaimer
+
+THIS CODE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
+CONNECTION WITH THE CODE OR THE USE OR OTHER DEALINGS IN THE CODE.
