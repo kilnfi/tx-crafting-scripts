@@ -15,16 +15,6 @@ import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1b
 import { AuthorizationType, StakeAuthorization } from 'cosmjs-types/cosmos/staking/v1beta1/authz';
 import { MsgBeginRedelegate, MsgDelegate, MsgUndelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
-import {
-  CouldNotBroadcastTx,
-  CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotFindTxStatus,
-  CouldNotGetBalance,
-  CouldNotGetTxStatus,
-  CouldNotPrepareTx,
-  InsufficientBalanceError,
-} from '@/errors/errors';
 import CosmosUtils from '@/COSMOS/CosmosUtils';
 import CustomStargateClient, { type ClientOptions } from '@/COSMOS/CustomStargateClient';
 import { TOKEN_UNIT_MAP } from '@/COSMOS/constants';
@@ -43,6 +33,16 @@ import type {
   Token,
   TokenToUnit,
 } from '@/COSMOS/types';
+import {
+  CouldNotBroadcastTx,
+  CouldNotCraftTx,
+  CouldNotDecodeTx,
+  CouldNotFindTxStatus,
+  CouldNotGetBalance,
+  CouldNotGetTxStatus,
+  CouldNotPrepareTx,
+  InsufficientBalanceError,
+} from '@/errors/errors';
 
 export default class CosmosService<T extends Token> {
   protected readonly utils;

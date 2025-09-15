@@ -1,7 +1,7 @@
 import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
-import { CouldNotCraftTx } from '@/errors/errors';
 import CosmosBaseService from '@/COSMOS/CosmosService';
 import type { CosmosTx } from '@/COSMOS/types';
+import { CouldNotCraftTx } from '@/errors/errors';
 
 export default class NobleService extends CosmosBaseService<'noble'> {
   constructor() {

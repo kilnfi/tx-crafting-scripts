@@ -1,7 +1,7 @@
 import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
-import { CouldNotCraftTx, InsufficientBalanceError } from '@/errors/errors';
 import CosmosService from '@/COSMOS/CosmosService';
 import type { CosmosTx } from '@/COSMOS/types';
+import { CouldNotCraftTx, InsufficientBalanceError } from '@/errors/errors';
 
 export default class DydxService extends CosmosService<'dydx'> {
   constructor() {

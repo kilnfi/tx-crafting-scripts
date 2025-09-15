@@ -1,8 +1,8 @@
 import type { Pubkey } from '@cosmjs/amino';
 import { ModuleAccount } from 'cosmjs-types/cosmos/auth/v1beta1/auth';
 import type { Any } from 'cosmjs-types/google/protobuf/any';
-import { invariant } from '@/errors/errors';
 import CosmosService from '@/COSMOS/CosmosService';
+import { invariant } from '@/errors/errors';
 
 const zetaAccountParse = (account: Any) => {
   const baseAccount = ModuleAccount.decode(account.value).baseAccount;
