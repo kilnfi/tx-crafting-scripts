@@ -6,7 +6,7 @@ import {
   CouldNotDecodeTx,
   CouldNotGetTxStatus,
   CouldNotPrepareTx,
-} from '@/app/errors';
+} from '@/errors/errors';
 import TrxUtils from '@/TRX/TRXUtils';
 
 export default class TrxService {

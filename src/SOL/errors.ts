@@ -1,5 +1,5 @@
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { ServerError } from '@/app/errors';
+import { ServerError } from '@/errors/errors';
 
 export class SolStakeAccountNotFoundError extends ServerError {
   constructor(stake_account: string) {

@@ -8,7 +8,7 @@ import {
   CouldNotDecodeTx,
   CouldNotGetTxStatus,
   CouldNotPrepareTx,
-} from '@/app/errors';
+} from '@/errors/errors';
 import { NearCouldNotFindWalletAccessKeyError } from '@/NEAR/errors';
 
 // Max gas fee to use (300 Tgas)

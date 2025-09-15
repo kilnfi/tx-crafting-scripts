@@ -51,6 +51,17 @@ export type CosmosRevokeRestakeRewardsOptions = {
 
 export type TokenToUnit = {
   atom: 'uatom';
+  osmo: 'uosmo';
+  dydx: 'adydx';
+  tia: 'utia';
+  zeta: 'azeta';
+  noble: 'uusdc';
+  fet: 'afet';
+  inj: 'inj';
+  kava: 'ukava';
+  om: 'uom';
+  cro: 'basecro';
+  sei: 'usei';
 };
 
 export type Token = keyof TokenToUnit;

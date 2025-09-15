@@ -10,6 +10,7 @@
     "@cosmjs/math": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
     "@cosmjs/stargate": "^0.32.4",
+    "@injectivelabs/sdk-ts": "^1.16.9",
     "@solana-developers/helpers": "^2.7.0",
     "@solana/web3.js": "^1.98.0",
     "@ton/core": "^0.56.3",

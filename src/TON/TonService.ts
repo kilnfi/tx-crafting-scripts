@@ -8,7 +8,7 @@ import {
   CouldNotFindTxStatus,
   CouldNotGetTxStatus,
   CouldNotPrepareTx,
-} from '@/app/errors';
+} from '@/errors/errors';
 import { VESTING_CONTRACT_OPCODES, WHALES_NOMINATOR_CONTRACT_OPCODES } from '@/TON/constants';
 import {
   TonPoolNotActiveError,

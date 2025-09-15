@@ -24,7 +24,7 @@ import {
   CouldNotGetTxStatus,
   CouldNotPrepareTx,
   InsufficientBalanceError,
-} from '@/app/errors';
+} from '@/errors/errors';
 import CosmosUtils from '@/COSMOS/CosmosUtils';
 import CustomStargateClient, { type ClientOptions } from '@/COSMOS/CustomStargateClient';
 import { TOKEN_UNIT_MAP } from '@/COSMOS/constants';

@@ -1,4 +1,4 @@
-import { ServerError } from '@/app/errors';
+import { ServerError } from '@/errors/errors';
 
 export class TonPoolNotActiveError extends ServerError {
   constructor(pool_address: string) {

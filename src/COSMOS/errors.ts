@@ -1,4 +1,4 @@
-import { ServerError } from '@/app/errors';
+import { ServerError } from '@/errors/errors';
 
 export class InjAddressDerivationMismatchError extends ServerError {
   constructor(address: string, pubkey: string) {

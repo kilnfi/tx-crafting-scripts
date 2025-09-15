@@ -18,7 +18,7 @@ import { MsgWithdrawDelegatorReward } from 'cosmjs-types/cosmos/distribution/v1b
 import { StakeAuthorization } from 'cosmjs-types/cosmos/staking/v1beta1/authz';
 import { MsgBeginRedelegate, MsgDelegate, MsgUndelegate } from 'cosmjs-types/cosmos/staking/v1beta1/tx';
 import { MsgTransfer } from 'cosmjs-types/ibc/applications/transfer/v1/tx';
-import { CouldNotFindValidatorAddress } from '@/app/errors';
+import { CouldNotFindValidatorAddress } from '@/errors/errors';
 import CustomStargateClient, { type ClientOptions } from '@/COSMOS/CustomStargateClient';
 import { MsgDepositForBurn } from '@/COSMOS/cctp/tx';
 import { ADDRESS_PREFIX_MAP, GAS_MAPPING } from '@/COSMOS/constants';
