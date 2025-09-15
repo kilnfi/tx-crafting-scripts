@@ -3,7 +3,7 @@ import { Uint53 } from '@cosmjs/math';
 import type { EncodeObject } from '@cosmjs/proto-signing';
 import { type AccountParser, type SequenceResponse, StargateClient } from '@cosmjs/stargate';
 import { Tendermint37Client } from '@cosmjs/tendermint-rpc';
-import { AddressNotFoundError, invariant } from '@/errors/errors';
+import { AddressNotFoundError, invariant } from '@/app/errors';
 
 export type ClientOptions = Parameters<(typeof CustomStargateClient)['customConnect']>[0];
 

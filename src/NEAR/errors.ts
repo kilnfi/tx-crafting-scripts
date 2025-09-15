@@ -1,4 +1,4 @@
-import { ServerError } from '@/errors/errors';
+import { ServerError } from '@/app/errors';
 
 export class NearCouldNotFindWalletAccessKeyError extends ServerError {
   constructor(wallet: string) {

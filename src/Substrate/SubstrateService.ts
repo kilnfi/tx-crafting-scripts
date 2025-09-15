@@ -2,7 +2,7 @@ import '@polkadot/api-augment';
 import { ApiPromise, HttpProvider } from '@polkadot/api';
 import type { GenericCall, GenericExtrinsicPayload } from '@polkadot/types';
 import { compactToU8a, u8aConcat } from '@polkadot/util';
-import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotDecodeTx, CouldNotPrepareTx } from '@/errors/errors';
+import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotDecodeTx, CouldNotPrepareTx } from '@/app/errors';
 import { REGISTRIES, type SubstrateToken } from '@/Substrate/constants';
 import SubstrateUtils from '@/Substrate/SubstrateUtils';
 import type { PolkadotTx } from '@/Substrate/types';

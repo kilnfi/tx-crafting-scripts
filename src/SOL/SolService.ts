@@ -21,7 +21,7 @@ import {
   CouldNotPrepareTx,
   InsufficientBalanceError,
   invariant,
-} from '@/errors/errors';
+} from '@/app/errors';
 import {
   SolAmountLessThanMinimumDelegationError,
   SolFailedToEstimateGas,

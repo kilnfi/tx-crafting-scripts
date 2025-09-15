@@ -11,6 +11,7 @@
     "@cosmjs/proto-signing": "^0.32.4",
     "@cosmjs/stargate": "^0.32.4",
     "@injectivelabs/sdk-ts": "^1.16.9",
+    "@mysten/sui": "^1.37.1",
     "@polkadot/api": "16.0.1",
     "@polkadot/api-augment": "16.0.1",
     "@polkadot/util": "^13.5.1",
