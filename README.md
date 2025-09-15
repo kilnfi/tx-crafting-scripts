@@ -1,12 +1,17 @@
 # Transactions crafting scripts
 
-### Disclaimer
+### ⚠️ Disclaimer
 
-⚠️ Kiln is a non-custodial staking provider. As a customer and owner of your assets, **it is YOUR responsibility to check and verify all the transactions you are signing**. While Kiln provides tooling to help you interact with your stakes (web applications, APIs, scripts), **Kiln is never responsible for the transactions that you sign.**
+- Kiln is a non-custodial staking provider. As the customer and ultimate owner of your assets, **it is your sole responsibility to review, check, and verify all transactions before signing and broadcasting them.**
+- Kiln may provide certain tooling (such as web applications, APIs, or scripts) to facilitate interaction with supported protocols. These tools are provided for convenience only. They do not constitute advice, nor do they alter the fact that you remain solely responsible for the transactions you generate, sign, and broadcast.
+- Kiln does not have access to your private keys and cannot execute, reverse, or validate transactions on your behalf. Kiln disclaims any responsibility or liability for the use of these scripts, including (without limitation) for missed staking rewards, slashing penalties, opportunity costs, or other losses  (as defined in your agreement with Kiln).
+- This repository and the associated code are provided “AS IS” and “AS AVAILABLE,” without warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
+- **In no event shall Kiln, its affiliates, or its contributors be liable for any claim, damages, or other liability, whether in contract, tort, or otherwise, arising from, out of, or in connection with the use of this repository or the transactions you execute based on it.**
+- By using these scripts, you acknowledge and agree that you are acting on your own responsibility and at your own risk.
 
 ### Introduction
 
-Scripts and utilities for crafting raw transactions across multiple blockchain protocols. This repository provides helpers to generate unsigned transactions for common operations (staking, unstaking, etc.). The transactions are returned in serialized form, and you are responsible for signing and broadcasting them yourself.
+These scripts are utilities for crafting raw transactions across multiple blockchain protocols. This repository provides templates to generate unsigned transactions for common operations (staking, unstaking, etc.). The transactions are returned in serialized form, and you are responsible for signing and broadcasting them yourself.
 
 ### ✅ Supported Protocols
 
@@ -86,12 +91,3 @@ This repo does not sign or manage keys. Typical flow:
 Sign unsigned_tx_serialized off-device or with your wallet/SDK.
 
 Broadcast the signed transaction to the network.
-
-### Legal disclaimer
-
-THIS CODE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
-CONNECTION WITH THE CODE OR THE USE OR OTHER DEALINGS IN THE CODE.
