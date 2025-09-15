@@ -1,16 +1,9 @@
-import { type ExecutionStatus, getFullnodeUrl, SuiClient } from '@mysten/sui/client';
+import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
 import { toSerializedSignature } from '@mysten/sui/cryptography';
 import { Ed25519PublicKey } from '@mysten/sui/keypairs/ed25519';
-import { Transaction, type TransactionData } from '@mysten/sui/transactions';
+import { Transaction } from '@mysten/sui/transactions';
 import { SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui/utils';
-import {
-  CouldNotBroadcastTx,
-  CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotFindTxStatus,
-  CouldNotGetTxStatus,
-  CouldNotPrepareTx,
-} from '@/app/errors';
+import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotPrepareTx } from '@/app/errors';
 import { remove0x } from '@/app/utils';
 import { SUI_MIN_STAKE_IN_MIST, SUI_OPERATIONS } from '@/SUI/constants';
 import { SuiInvalidSplitStakeAmountError, SuiInvalidStakeIdError } from '@/SUI/errors';
@@ -230,19 +223,6 @@ export default class SuiService {
   }
 
   /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<TransactionData> {
-    try {
-      return Transaction.from(tx_serialized).getData();
-    } catch (error) {
-      throw new CouldNotDecodeTx(error);
-    }
-  }
-
-  /**
    * Broadcast a transaction
    *
    * @throws {CouldNotBroadcastTx} if the transaction could not be broadcasted
@@ -289,18 +269,6 @@ export default class SuiService {
       };
     } catch (err) {
       throw new CouldNotPrepareTx(err);
-    }
-  }
-
-  public async txStatus(digest: string): Promise<ExecutionStatus> {
-    try {
-      const result = await this.client.getTransactionBlock({ digest, options: { showEffects: true } });
-
-      if (!result.effects) throw new CouldNotFindTxStatus();
-
-      return result.effects.status;
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
     }
   }
 }

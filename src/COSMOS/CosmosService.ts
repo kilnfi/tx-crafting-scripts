@@ -1,8 +1,7 @@
 import { type Coin, coin, encodeSecp256k1Signature } from '@cosmjs/amino';
 import { fromBase64 } from '@cosmjs/encoding';
-import { type DecodedTxRaw, decodeTxRaw, type EncodeObject } from '@cosmjs/proto-signing';
+import type { EncodeObject } from '@cosmjs/proto-signing';
 import type {
-  IndexedTx,
   MsgBeginRedelegateEncodeObject,
   MsgDelegateEncodeObject,
   MsgSendEncodeObject,
@@ -18,10 +17,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import {
   CouldNotBroadcastTx,
   CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotFindTxStatus,
   CouldNotGetBalance,
-  CouldNotGetTxStatus,
   CouldNotPrepareTx,
   InsufficientBalanceError,
 } from '@/app/errors';
@@ -61,19 +57,6 @@ export default class CosmosService<T extends Token> {
   }
 
   /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<DecodedTxRaw> {
-    try {
-      return decodeTxRaw(Uint8Array.from(Buffer.from(tx_serialized, 'hex')));
-    } catch (err) {
-      throw new CouldNotDecodeTx(err);
-    }
-  }
-
-  /**
    * Broadcast a transaction
    *
    * @throws {CouldNotBroadcastTx} if the transaction could not be broadcasted
@@ -84,25 +67,6 @@ export default class CosmosService<T extends Token> {
       return { tx_hash: result.transactionHash };
     } catch (err) {
       throw new CouldNotBroadcastTx(err);
-    }
-  }
-
-  /**
-   * Get the status of a transaction
-   *
-   * @throws {CouldNotGetTxStatus} if the transaction could not be found
-   */
-  public async txStatus(tx_hash: string): Promise<{
-    status: 'success' | 'error';
-    receipt: IndexedTx | null;
-  }> {
-    try {
-      const receipt = await (await this.client).getTx(tx_hash);
-      if (!receipt) throw new CouldNotFindTxStatus();
-      const status = receipt.code === 0 ? 'success' : 'error';
-      return { status, receipt };
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
     }
   }
 

@@ -10,14 +10,11 @@ import {
   Transaction,
   TransactionInstruction,
   VersionedTransaction,
-  type VersionedTransactionResponse,
 } from '@solana/web3.js';
 import { getSimulationComputeUnits } from '@solana-developers/helpers';
 import {
   CouldNotBroadcastTx,
   CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotGetTxStatus,
   CouldNotPrepareTx,
   InsufficientBalanceError,
   invariant,
@@ -452,26 +449,6 @@ export default class SolService {
   }
 
   /**
-   * Get the status of a transaction
-   *
-   * @throws {CouldNotGetTxStatus} if the transaction status could not be retrieved
-   */
-  public async txStatus(tx_hash: string): Promise<{
-    status: 'success' | 'error';
-    receipt: VersionedTransactionResponse | null;
-  }> {
-    try {
-      const receipt = await this.client.getTransaction(tx_hash, {
-        maxSupportedTransactionVersion: 0, // support legacy and new transactions https://solana.com/docs/advanced/versions#max-supported-transaction-version
-      });
-      const status = receipt?.meta?.err === null ? 'success' : 'error';
-      return { status, receipt };
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
-    }
-  }
-
-  /**
    * Add a priority fee instruction that allows transactions to be broadcasted faster when network is congested
    *
    * ref: https://solana.com/developers/guides/advanced/how-to-use-priority-fees
@@ -515,19 +492,6 @@ export default class SolService {
       );
     } catch (err) {
       throw new SolFailedToEstimateGas(err);
-    }
-  }
-
-  /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<Transaction> {
-    try {
-      return Transaction.from(Buffer.from(tx_serialized, 'hex'));
-    } catch (err) {
-      throw new CouldNotDecodeTx(err);
     }
   }
 

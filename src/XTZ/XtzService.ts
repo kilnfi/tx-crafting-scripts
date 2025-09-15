@@ -1,18 +1,10 @@
 import { HttpBackend } from '@taquito/http-utils';
 import { localForger } from '@taquito/local-forging';
-import type { OperationContents, OperationEntry } from '@taquito/rpc';
-import { ChainIds, Context, type ForgeParams, OpKind, TezosToolkit } from '@taquito/taquito';
+import type { OperationContents } from '@taquito/rpc';
+import { Context, type ForgeParams, OpKind, TezosToolkit } from '@taquito/taquito';
 import { b58cdecode, b58cencode, buf2hex, hex2buf, mergebuf, prefix } from '@taquito/utils';
 import sodium from 'libsodium-wrappers';
-import {
-  CouldNotBroadcastTx,
-  CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotFindTxStatus,
-  CouldNotGetTxStatus,
-  CouldNotPrepareTx,
-} from '@/app/errors';
-import { remove0x } from '@/app/utils';
+import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotPrepareTx } from '@/app/errors';
 import { XtzAccountNotRevealedError, XtzCounterUndefinedError, XtzWalletNotDelegatedToBakerError } from '@/XTZ/errors';
 import type { TezosTx } from '@/XTZ/types';
 
@@ -178,54 +170,6 @@ export default class XtzService {
       return await this.buildTx(operation);
     } catch (err) {
       throw new CouldNotCraftTx(err);
-    }
-  }
-
-  /**
-   * Get the status of a transaction
-   *
-   * @throws {CouldNotGetTxStatus} if the transaction status could not be retrieved
-   */
-  public async txStatus({
-    block_number,
-    tx_hash,
-  }: {
-    block_number: number;
-    tx_hash: string;
-  }): Promise<{ status: string; receipt: OperationEntry }> {
-    try {
-      const url = `${process.env.XTZ_RPC_URL as string}/chains/${ChainIds.MAINNET}/blocks/${block_number}/operations`;
-      // Get txs in block
-      const operations = await this.backend.createRequest<OperationEntry[][]>({ url, method: 'GET' });
-
-      // Find tx receipt
-      const receipt = (() => {
-        for (const operation of operations) {
-          const tx = operation.find((t) => t.hash === tx_hash);
-          if (tx) return tx;
-        }
-        throw new CouldNotFindTxStatus();
-      })();
-
-      // biome-ignore lint: receipt is not typed correctly
-      const status = (receipt as any)?.contents?.[0]?.metadata?.operation_result?.status;
-
-      return { status, receipt };
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
-    }
-  }
-
-  /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<ForgeParams> {
-    try {
-      return localForger.parse(remove0x(tx_serialized));
-    } catch (err) {
-      throw new CouldNotDecodeTx(err);
     }
   }
 

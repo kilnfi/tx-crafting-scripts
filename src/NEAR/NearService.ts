@@ -1,14 +1,7 @@
 import { type ConnectConfig, connect, type Near, transactions, utils } from 'near-api-js';
-import { type FinalExecutionOutcome, FinalExecutionStatusBasic } from 'near-api-js/lib/providers';
 import { PublicKey } from 'near-api-js/lib/utils';
 import { sha256 } from 'viem';
-import {
-  CouldNotBroadcastTx,
-  CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotGetTxStatus,
-  CouldNotPrepareTx,
-} from '@/app/errors';
+import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotDecodeTx, CouldNotPrepareTx } from '@/app/errors';
 import { NearCouldNotFindWalletAccessKeyError } from '@/NEAR/errors';
 
 // Max gas fee to use (300 Tgas)
@@ -204,33 +197,5 @@ export default class NearService {
       unsigned_tx_hash,
       tx,
     };
-  }
-
-  /**
-   * Get transaction status
-   *
-   * @throws {CouldNotGetTxStatus} if the transaction status could not be retrieved
-   */
-  public async txStatus(
-    tx_hash: string,
-    wallet: string,
-  ): Promise<{ status: 'success' | 'error'; receipt: FinalExecutionOutcome }> {
-    try {
-      const connection = await this.getArchivalConnection();
-      const receipt = await connection.connection.provider.txStatus(tx_hash, wallet, 'FINAL');
-
-      const status =
-        typeof receipt.status === 'object'
-          ? 'Failure' in receipt.status
-            ? 'error'
-            : 'success'
-          : receipt.status === FinalExecutionStatusBasic.Failure
-            ? 'error'
-            : 'success';
-
-      return { status, receipt };
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
-    }
   }
 }

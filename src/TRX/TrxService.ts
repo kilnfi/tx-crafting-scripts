@@ -1,12 +1,6 @@
 import { TronWeb } from 'tronweb';
-import type { Resource, TransactionInfo, VoteInfo } from 'tronweb/lib/esm/types';
-import {
-  CouldNotBroadcastTx,
-  CouldNotCraftTx,
-  CouldNotDecodeTx,
-  CouldNotGetTxStatus,
-  CouldNotPrepareTx,
-} from '@/app/errors';
+import type { Resource, VoteInfo } from 'tronweb/lib/esm/types';
+import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotPrepareTx } from '@/app/errors';
 import TrxUtils from '@/TRX/TRXUtils';
 
 export default class TrxService {
@@ -18,40 +12,6 @@ export default class TrxService {
     this.tronWeb = new TronWeb({
       fullHost: process.env.TRON_RPC_URL as string,
     });
-  }
-
-  /**
-   * Get the status of a transaction
-   *
-   * @throws {CouldNotGetTxStatus} if the transaction could not be found
-   */
-  public async txStatus(tx_hash: string): Promise<{ status: 'success' | 'error'; info: TransactionInfo }> {
-    try {
-      const info = await this.tronWeb.trx.getTransactionInfo(tx_hash);
-
-      if (!info.id) {
-        throw new Error(`Transaction with hash ${tx_hash} not found`);
-      }
-
-      const status = info.result === 'FAILED' ? 'error' : 'success';
-      return { status, info };
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
-    }
-  }
-
-  /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<object> {
-    try {
-      const pbTx = this.utils.serializedToPb(tx_serialized);
-      return pbTx.toObject();
-    } catch (err) {
-      throw new CouldNotDecodeTx(err);
-    }
   }
 
   /**

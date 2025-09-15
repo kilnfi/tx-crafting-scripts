@@ -2,13 +2,7 @@ import { getSecureRandomBytes } from '@ton/crypto';
 import { Address as CoreAddress, TonClient, toNano } from '@ton/ton';
 import TonWeb from 'tonweb';
 import type { Cell } from 'tonweb/dist/types/boc/cell';
-import {
-  AddressNotFoundError,
-  CouldNotBroadcastTx,
-  CouldNotFindTxStatus,
-  CouldNotGetTxStatus,
-  CouldNotPrepareTx,
-} from '@/app/errors';
+import { AddressNotFoundError, CouldNotBroadcastTx, CouldNotPrepareTx } from '@/app/errors';
 import { VESTING_CONTRACT_OPCODES, WHALES_NOMINATOR_CONTRACT_OPCODES } from '@/TON/constants';
 import {
   TonPoolNotActiveError,
@@ -18,7 +12,6 @@ import {
   TonWalletNotOwnerOfVestingContractError,
   TonWalletNotSenderOfVestingContractError,
 } from '@/TON/errors';
-import { TonParser } from '@/TON/TonParser';
 import type { TonTx, WalletInfo } from '@/TON/types';
 
 const TON_WHALES_POOLS = [
@@ -45,53 +38,6 @@ export default class TonService {
 
   private getClientUrl() {
     return 'https://toncenter.com';
-  }
-
-  /**
-   * Get the status of a transaction
-   *
-   * @throws {CouldNotGetTxStatus} if the transaction could not be found
-   */
-  public async txStatus(msg_hash: string, direction?: string) {
-    try {
-      // replace all whitespaces with + and encode the message hash
-      const encoded_msg_hash = encodeURIComponent(msg_hash.replaceAll(/\s/g, '+'));
-      const uri = `${this.getClientUrl()}/api/v3/transactionsByMessage?direction=${direction ?? 'in'}&msg_hash=${encoded_msg_hash}&limit=128&offset=0`;
-      const data = await fetch(uri, {
-        method: 'GET',
-        headers: {
-          'X-API-Key': process.env.TON_CENTER_API_KEY as string,
-        },
-      });
-      const res = await data.json();
-      if (res?.transactions?.length === 0) {
-        throw new CouldNotFindTxStatus();
-      }
-      return res;
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
-    }
-  }
-
-  /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<object> {
-    try {
-      const boc = TonWeb.boc.Cell.fromBoc(tx_serialized);
-      const cells = [];
-      for (let i = 0; i < boc.length; i++) {
-        cells.push({
-          body: new TonParser(boc[i]).parseTx(),
-          message: new TonParser(boc[i].refs[0]).parseCommonMsgInfo(),
-        });
-      }
-      return { ...cells };
-    } catch (err) {
-      throw new CouldNotGetTxStatus(err);
-    }
   }
 
   /**

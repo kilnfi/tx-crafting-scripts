@@ -1,8 +1,6 @@
 import '@polkadot/api-augment';
 import { ApiPromise, HttpProvider } from '@polkadot/api';
-import type { GenericCall, GenericExtrinsicPayload } from '@polkadot/types';
-import { compactToU8a, u8aConcat } from '@polkadot/util';
-import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotDecodeTx, CouldNotPrepareTx } from '@/app/errors';
+import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotPrepareTx } from '@/app/errors';
 import { REGISTRIES, type SubstrateToken } from '@/Substrate/constants';
 import SubstrateUtils from '@/Substrate/SubstrateUtils';
 import type { PolkadotTx } from '@/Substrate/types';
@@ -42,41 +40,6 @@ export default abstract class SubstrateService {
       return { signed_tx_serialized: extrinsic.toHex() };
     } catch (err) {
       throw new CouldNotPrepareTx(err);
-    }
-  }
-
-  private async decodePrefixedPayload(payload: string): Promise<{
-    call: GenericCall;
-    extrinsic_payload: GenericExtrinsicPayload;
-  }> {
-    const client = await this.utils.client;
-    const call = client.createType('Call', payload);
-    const prefixed = u8aConcat(compactToU8a(call.encodedLength), payload);
-    const extrinsic_payload = client.createType('ExtrinsicPayload', prefixed);
-    return {
-      call,
-      extrinsic_payload,
-    };
-  }
-
-  /**
-   * Decode a transaction
-   *
-   * @throws {CouldNotDecodeTx} if the transaction could not be decoded
-   */
-  public async decodeTx(tx_serialized: string): Promise<object> {
-    try {
-      const { call, extrinsic_payload } = await this.decodePrefixedPayload(tx_serialized);
-      const extrinsic_payload_human = extrinsic_payload.toHuman() as object;
-      if ('method' in extrinsic_payload_human) {
-        extrinsic_payload_human.method = undefined;
-      }
-      return {
-        ...extrinsic_payload_human,
-        ...call.toHuman(),
-      };
-    } catch (err) {
-      throw new CouldNotDecodeTx(err);
     }
   }
 
