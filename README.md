@@ -23,6 +23,7 @@ These scripts are utilities for crafting raw transactions across multiple blockc
 - Injective (INJ)
 - Kava (KAVA)
 - Kusama (KSM)
+- Near (NEAR)
 - Noble (NOBLE)
 - MANTRA (OM)
 - Osmosis (OSMO)
