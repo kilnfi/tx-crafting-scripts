@@ -4,6 +4,27 @@
 
 Scripts and utilities for crafting raw transactions across multiple blockchain protocols. This repository provides helpers to generate unsigned transactions for common operations (staking, unstaking, etc.). The transactions are returned in serialized form, and you are responsible for signing and broadcasting them yourself.
 
+### ✅ Supported Protocols
+
+- Cosmos Hub (ATOM)
+- Cronos (CRO)
+- Polkadot (DOT)
+- dYdX Chain (DYDX)
+- Fetch.ai (FET)
+- Injective (INJ)
+- Kava (KAVA)
+- Kusama (KSM)
+- Noble (NOBLE)
+- MANTRA (OM)
+- Osmosis (OSMO)
+- Sei (SEI)
+- Solana (SOL)
+- Celestia (TIA)
+- The Open Network (TON)
+- Tron (TRX)
+- Tezos (XTZ)
+- ZetaChain (ZETA)
+
 ### 📦 Installation
 
 - Prerequisite: [Bun](https://bun.sh/) installed on your system
