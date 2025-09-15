@@ -1,5 +1,7 @@
 # Transactions crafting scripts
 
+> ⚠️ Kiln is a non-custodial staking provider. As a customer and owner of your assets, it is YOUR responsibility to check and verify all the transactions you are signing. While Kiln provides tooling to help you interact with your stakes (web applications, APIs), Kiln is not responsible for the transactions that you sign.
+
 Scripts and utilities for crafting raw transactions across multiple blockchain protocols. This repository provides helpers to generate unsigned transactions for common operations (staking, unstaking, etc.). The transactions are returned in serialized form, and you are responsible for signing and broadcasting them yourself.
 
 ### 📦 Installation
