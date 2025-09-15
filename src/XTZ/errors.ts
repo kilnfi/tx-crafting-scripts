@@ -1,6 +1,6 @@
-import { ServerError } from '@/app/errors';
+import { BaseError } from '@/app/errors';
 
-export class XtzAccountNotRevealedError extends ServerError {
+export class XtzAccountNotRevealedError extends BaseError {
   constructor(wallet: string) {
     super(
       422,
@@ -9,13 +9,13 @@ export class XtzAccountNotRevealedError extends ServerError {
   }
 }
 
-export class XtzWalletNotDelegatedToBakerError extends ServerError {
+export class XtzWalletNotDelegatedToBakerError extends BaseError {
   constructor(wallet: string) {
     super(422, `Wallet ${wallet} must be delegated to a baker before staking.`);
   }
 }
 
-export class XtzCounterUndefinedError extends ServerError {
+export class XtzCounterUndefinedError extends BaseError {
   constructor(wallet: string) {
     super(422, `Counter of wallet ${wallet} is not defined.`);
   }
