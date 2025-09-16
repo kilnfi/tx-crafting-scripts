@@ -51,7 +51,7 @@ bun install
 
 ### 🚀 Usage
 
-Each protocol has its own service class. For example, to craft a withdraw transaction on Solana:
+Each protocol has its own service class. For example, to craft a stake transaction on Solana:
 
 ```ts
 import SolService from "@/SOL/SolService";
