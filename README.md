@@ -15,6 +15,7 @@ These scripts are utilities for crafting raw transactions across multiple blockc
 
 ### ✅ Supported Protocols
 
+- Cardano (ADA)
 - Cosmos Hub (ATOM)
 - Cronos (CRO)
 - Polkadot (DOT)
