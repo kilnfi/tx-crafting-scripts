@@ -34,7 +34,7 @@
         "viem": "2.24.3",
       },
       "devDependencies": {
-        "@biomejs/biome": "^2.2.0",
+        "@biomejs/biome": "2.2.4",
         "bun-types": "latest",
         "typescript": "5.6.3",
       },
