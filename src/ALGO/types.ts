@@ -31,12 +31,6 @@ export type ValidatorConfig = [
   sunsettingTo: bigint, // 17
 ];
 
-export type ValidatorPoolKey = [
-  id: bigint, // Validator ID
-  poolId: bigint, // Pool number (1-based; 0 indicates no available pool)
-  poolAppId: bigint, // The pool's application ID
-];
-
 /**
  * Result from findPoolForStaker
  * Based on: https://github.com/algorandfoundation/reti/blob/dev/contracts/contracts/validatorRegistry.algo.ts
@@ -45,4 +39,16 @@ export type PoolForStakerResult = [
   poolKey: [id: bigint, poolId: bigint, poolAppId: bigint], // 0
   isNewStakerToValidator: boolean, // 1
   isNewStakerToProtocol: boolean, // 2
+];
+
+/**
+ * Staker information returned from pool contract
+ * Based on: https://github.com/algorandfoundation/reti/blob/dev/contracts/contracts/stakingPool.algo.ts
+ */
+export type StakerInfo = [
+  account: string, // 0
+  balance: bigint, // 1
+  totalRewarded: bigint, // 2
+  rewardTokenBalance: bigint, // 3
+  entryRound: bigint, // 4
 ];

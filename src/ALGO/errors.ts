@@ -33,8 +33,26 @@ export class AlgoFindPoolError extends BaseError {
   }
 }
 
+export class AlgoGetStakerInfoError extends BaseError {
+  constructor(failureMessage: string) {
+    super(422, `Failed to get staker info: ${failureMessage}`);
+  }
+}
+
 export class AlgoMinimumEntryStakeError extends BaseError {
   constructor(amount: string, minEntryStake: string) {
-    super(422, `New staker to validator: stake amount ${amount} is below minimum entry stake ${minEntryStake}`);
+    super(
+      422,
+      `New staker to validator: stake amount ${amount} ALGO is below minimum entry stake ${minEntryStake} ALGO`,
+    );
+  }
+}
+
+export class AlgoInvalidRemoveStakeError extends BaseError {
+  constructor(amount: string, remainingBalance: string, minEntryStake: string) {
+    super(
+      422,
+      `Cannot remove ${amount} ALGO: remaining balance of ${remainingBalance} ALGO would be below minimum entry stake of ${minEntryStake} ALGO. Either remove all your staked balance or leave at least the minimum entry stake amount.`,
+    );
   }
 }

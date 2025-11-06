@@ -2,7 +2,7 @@ import { microAlgo } from '@algorandfoundation/algokit-utils';
 import algosdk from 'algosdk';
 import AlgoUtils from '@/ALGO/AlgoUtils';
 import { ALGO_ABI_METHODS, ALGO_CONSTANTS, RETI_APP_ID } from '@/ALGO/constants';
-import { AlgoMinimumEntryStakeError } from '@/ALGO/errors';
+import { AlgoInvalidRemoveStakeError, AlgoMinimumEntryStakeError } from '@/ALGO/errors';
 import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotPrepareTx } from '@/app/errors';
 
 export default class AlgoService {
@@ -41,7 +41,10 @@ export default class AlgoService {
       const isNewStakerToValidator = poolForStakerResult[1];
 
       if (isNewStakerToValidator && amount_bigint < minEntryStake) {
-        throw new AlgoMinimumEntryStakeError(amount_microalgo, minEntryStake.toString());
+        throw new AlgoMinimumEntryStakeError(
+          microAlgo(amount_bigint).algo.toString(),
+          microAlgo(minEntryStake).algo.toString(),
+        );
       }
 
       // Simulate to calculate required fees
@@ -54,23 +57,19 @@ export default class AlgoService {
       const suggestedParams = await this.utils.getSuggestedParams();
       const signer = algosdk.makeEmptyTransactionSigner();
 
-      // Get ABI methods
-      const gasMethod = this.utils.getAbiMethod(ALGO_ABI_METHODS.GAS);
-      const addStakeMethod = this.utils.getAbiMethod(ALGO_ABI_METHODS.ADD_STAKE);
-
       // Create payment transaction
       const algorandClient = this.utils.getClient();
       const paymentTx = await algorandClient.createTransaction.payment({
         sender: sender_address,
         receiver: ALGO_CONSTANTS.RETI_APP_ADDRESS,
-        amount: microAlgo(Number(amount_bigint)),
+        amount: microAlgo(amount_bigint),
       });
 
       const atc = new algosdk.AtomicTransactionComposer();
 
       atc.addMethodCall({
         appID: RETI_APP_ID,
-        method: gasMethod,
+        method: ALGO_ABI_METHODS.GAS,
         methodArgs: [],
         sender: sender_address,
         signer,
@@ -80,7 +79,7 @@ export default class AlgoService {
 
       atc.addMethodCall({
         appID: RETI_APP_ID,
-        method: gasMethod,
+        method: ALGO_ABI_METHODS.GAS,
         methodArgs: [],
         sender: sender_address,
         suggestedParams,
@@ -90,7 +89,7 @@ export default class AlgoService {
 
       atc.addMethodCall({
         appID: RETI_APP_ID,
-        method: addStakeMethod,
+        method: ALGO_ABI_METHODS.ADD_STAKE,
         methodArgs: [
           {
             txn: paymentTx,
@@ -114,6 +113,10 @@ export default class AlgoService {
         unsigned_txs_serialized: populatedTxs.map((tx) => Buffer.from(tx.bytesToSign()).toString('hex')),
       };
     } catch (err) {
+      if (err instanceof AlgoMinimumEntryStakeError) {
+        throw err;
+      }
+
       throw new CouldNotCraftTx(err);
     }
   }
@@ -134,8 +137,36 @@ export default class AlgoService {
       const validator_id_bigint = BigInt(validator_id);
       const amount_bigint = BigInt(amount_microalgo);
 
+      // Get validator config to check minimum entry stake
+      const validatorConfig = await this.utils.getValidatorConfig(validator_id_bigint, sender_address);
+      const minEntryStake = validatorConfig[13];
+
+      // Find the pool where the staker has funds
+      const poolForStakerResult = await this.utils.findPoolForStaker(
+        validator_id_bigint,
+        sender_address,
+        amount_bigint,
+      );
+      const poolKey = poolForStakerResult[0];
+      const poolAppId = poolKey[2];
+
+      // Get staker's current balance in the pool
+      const stakerInfo = await this.utils.getStakerInfo(poolAppId, sender_address);
+      const currentBalance = stakerInfo[1];
+      const remainingBalance = currentBalance - amount_bigint;
+
+      // Validate that remaining balance is either zero (full withdrawal) or above minimum entry stake
+      if (remainingBalance > 0n && remainingBalance < minEntryStake) {
+        throw new AlgoInvalidRemoveStakeError(
+          microAlgo(amount_bigint).algo.toString(),
+          microAlgo(remainingBalance).algo.toString(),
+          microAlgo(minEntryStake).algo.toString(),
+        );
+      }
+
       // Simulate to calculate required fees
-      const simulateResult = await this.utils.simulateRemoveStake(validator_id_bigint, sender_address, amount_bigint);
+      const simulateResult = await this.utils.simulateRemoveStake(poolAppId, sender_address, amount_bigint);
+
       const appBudgetAdded = simulateResult.simulateResponse.txnGroups[0].appBudgetAdded || 0;
       const extraFee = this.utils.calculateExtraFee(appBudgetAdded, 2);
 
@@ -144,15 +175,11 @@ export default class AlgoService {
       const suggestedParams = await this.utils.getSuggestedParams();
       const signer = algosdk.makeEmptyTransactionSigner();
 
-      // Get ABI methods
-      const gasMethod = this.utils.getAbiMethod(ALGO_ABI_METHODS.GAS);
-      const removeStakeMethod = this.utils.getAbiMethod(ALGO_ABI_METHODS.REMOVE_STAKE);
-
       const atc = new algosdk.AtomicTransactionComposer();
 
       atc.addMethodCall({
-        appID: RETI_APP_ID,
-        method: gasMethod,
+        appID: poolAppId,
+        method: ALGO_ABI_METHODS.GAS,
         methodArgs: [],
         sender: sender_address,
         signer,
@@ -161,8 +188,8 @@ export default class AlgoService {
       });
 
       atc.addMethodCall({
-        appID: RETI_APP_ID,
-        method: gasMethod,
+        appID: poolAppId,
+        method: ALGO_ABI_METHODS.GAS,
         methodArgs: [],
         sender: sender_address,
         suggestedParams,
@@ -171,9 +198,9 @@ export default class AlgoService {
       });
 
       atc.addMethodCall({
-        appID: RETI_APP_ID,
-        method: removeStakeMethod,
-        methodArgs: [validator_id_bigint, 0n, amount_bigint],
+        appID: poolAppId,
+        method: ALGO_ABI_METHODS.REMOVE_STAKE,
+        methodArgs: [sender_address, amount_bigint],
         sender: sender_address,
         suggestedParams: {
           ...suggestedParams,
@@ -189,6 +216,10 @@ export default class AlgoService {
         unsigned_txs_serialized: populatedTxs.map((tx) => Buffer.from(tx.bytesToSign()).toString('hex')),
       };
     } catch (err) {
+      if (err instanceof AlgoInvalidRemoveStakeError) {
+        throw err;
+      }
+
       throw new CouldNotCraftTx(err);
     }
   }
@@ -234,7 +265,7 @@ export default class AlgoService {
 
       const algorandClient = this.utils.getClient();
       const result = await algorandClient.client.algod.sendRawTransaction(signedTxs).do();
-
+      console.log('result', result);
       return { tx_id: result.txid };
     } catch (err) {
       throw new CouldNotBroadcastTx(err);

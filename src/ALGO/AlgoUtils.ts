@@ -1,8 +1,8 @@
 import { AlgorandClient, microAlgo, populateAppCallResources } from '@algorandfoundation/algokit-utils';
-import algosdk from 'algosdk';
+import type algosdk from 'algosdk';
 import { ALGO_ABI_METHODS, ALGO_CONSTANTS, RETI_APP_ID } from '@/ALGO/constants';
-import { AlgoFindPoolError, AlgoValidatorConfigError } from '@/ALGO/errors';
-import type { PoolForStakerResult, ValidatorConfig } from '@/ALGO/types';
+import { AlgoFindPoolError, AlgoGetStakerInfoError, AlgoValidatorConfigError } from '@/ALGO/errors';
+import type { PoolForStakerResult, StakerInfo, ValidatorConfig } from '@/ALGO/types';
 
 export default class AlgoUtils {
   private readonly algorandClient: AlgorandClient;
@@ -11,18 +11,12 @@ export default class AlgoUtils {
     this.algorandClient = AlgorandClient.mainNet();
   }
 
-  public getAbiMethod(signature: string): algosdk.ABIMethod {
-    return algosdk.ABIMethod.fromSignature(signature);
-  }
-
   public async getValidatorConfig(validator_id: bigint, sender_address: string): Promise<ValidatorConfig> {
     try {
-      const method = this.getAbiMethod(ALGO_ABI_METHODS.GET_VALIDATOR_CONFIG);
-
       const configComposer = this.algorandClient.newGroup().addAppCallMethodCall({
         sender: sender_address,
         appId: RETI_APP_ID,
-        method,
+        method: ALGO_ABI_METHODS.GET_VALIDATOR_CONFIG,
         args: [validator_id],
       });
 
@@ -59,21 +53,18 @@ export default class AlgoUtils {
     stake_amount: bigint,
   ): Promise<PoolForStakerResult> {
     try {
-      const gasMethod = this.getAbiMethod(ALGO_ABI_METHODS.GAS);
-      const findPoolMethod = this.getAbiMethod(ALGO_ABI_METHODS.FIND_POOL_FOR_STAKER);
-
       const poolComposer = this.algorandClient
         .newGroup()
         .addAppCallMethodCall({
           sender: sender_address,
           appId: RETI_APP_ID,
-          method: gasMethod,
+          method: ALGO_ABI_METHODS.GAS,
           args: [],
         })
         .addAppCallMethodCall({
           sender: sender_address,
           appId: RETI_APP_ID,
-          method: findPoolMethod,
+          method: ALGO_ABI_METHODS.FIND_POOL_FOR_STAKER,
           args: [validator_id, sender_address, stake_amount],
         });
 
@@ -99,6 +90,41 @@ export default class AlgoUtils {
       }
 
       throw new AlgoFindPoolError(error instanceof Error ? error.message : 'Unknown error finding pool for staker');
+    }
+  }
+
+  public async getStakerInfo(poolAppId: bigint, staker_address: string): Promise<StakerInfo> {
+    try {
+      const stakerInfoComposer = this.algorandClient.newGroup().addAppCallMethodCall({
+        sender: staker_address,
+        appId: poolAppId,
+        method: ALGO_ABI_METHODS.GET_STAKER_INFO,
+        args: [staker_address],
+        staticFee: microAlgo(10000),
+      });
+
+      const stakerInfoResult = await stakerInfoComposer.simulate({
+        skipSignatures: true,
+        allowUnnamedResources: true,
+      });
+
+      const failureMessage = stakerInfoResult.simulateResponse.txnGroups[0].failureMessage;
+      if (failureMessage) {
+        throw new AlgoGetStakerInfoError(failureMessage);
+      }
+
+      const returnValue = stakerInfoResult.returns?.[0]?.returnValue;
+      if (!returnValue) {
+        throw new AlgoGetStakerInfoError('No staker info returned');
+      }
+
+      return returnValue as StakerInfo;
+    } catch (error) {
+      if (error instanceof AlgoGetStakerInfoError) {
+        throw error;
+      }
+
+      throw new AlgoGetStakerInfoError(error instanceof Error ? error.message : 'Unknown error fetching staker info');
     }
   }
 
@@ -133,9 +159,6 @@ export default class AlgoUtils {
   }
 
   public async simulateAddStake(validator_id: bigint, sender_address: string, stake_amount: bigint) {
-    const gasMethod = this.getAbiMethod(ALGO_ABI_METHODS.GAS);
-    const addStakeMethod = this.getAbiMethod(ALGO_ABI_METHODS.ADD_STAKE);
-
     const paymentTxn = await this.algorandClient.createTransaction.payment({
       sender: sender_address,
       receiver: ALGO_CONSTANTS.RETI_APP_ADDRESS,
@@ -147,21 +170,21 @@ export default class AlgoUtils {
       .addAppCallMethodCall({
         sender: sender_address,
         appId: RETI_APP_ID,
-        method: gasMethod,
+        method: ALGO_ABI_METHODS.GAS,
         args: [],
         note: '1',
       })
       .addAppCallMethodCall({
         sender: sender_address,
         appId: RETI_APP_ID,
-        method: gasMethod,
+        method: ALGO_ABI_METHODS.GAS,
         args: [],
         note: '2',
       })
       .addAppCallMethodCall({
         sender: sender_address,
         appId: RETI_APP_ID,
-        method: addStakeMethod,
+        method: ALGO_ABI_METHODS.ADD_STAKE,
         args: [paymentTxn, validator_id, 0n],
         staticFee: microAlgo(240000),
       });
@@ -172,31 +195,28 @@ export default class AlgoUtils {
     });
   }
 
-  public async simulateRemoveStake(validator_id: bigint, sender_address: string, unstake_amount: bigint) {
-    const gasMethod = this.getAbiMethod(ALGO_ABI_METHODS.GAS);
-    const removeStakeMethod = this.getAbiMethod(ALGO_ABI_METHODS.REMOVE_STAKE);
-
+  public async simulateRemoveStake(poolAppId: bigint, sender_address: string, unstake_amount: bigint) {
     const simulateComposer = this.algorandClient
       .newGroup()
       .addAppCallMethodCall({
         sender: sender_address,
-        appId: RETI_APP_ID,
-        method: gasMethod,
+        appId: poolAppId,
+        method: ALGO_ABI_METHODS.GAS,
         args: [],
         note: '1',
       })
       .addAppCallMethodCall({
         sender: sender_address,
-        appId: RETI_APP_ID,
-        method: gasMethod,
+        appId: poolAppId,
+        method: ALGO_ABI_METHODS.GAS,
         args: [],
         note: '2',
       })
       .addAppCallMethodCall({
         sender: sender_address,
-        appId: RETI_APP_ID,
-        method: removeStakeMethod,
-        args: [validator_id, 0n, unstake_amount],
+        appId: poolAppId,
+        method: ALGO_ABI_METHODS.REMOVE_STAKE,
+        args: [sender_address, unstake_amount],
         staticFee: microAlgo(240000),
       });
 
