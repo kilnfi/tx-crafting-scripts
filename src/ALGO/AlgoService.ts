@@ -3,7 +3,13 @@ import algosdk from 'algosdk';
 import AlgoUtils from '@/ALGO/AlgoUtils';
 import { ALGO_ABI_METHODS, ALGO_CONSTANTS, RETI_APP_ID } from '@/ALGO/constants';
 import { AlgoInvalidRemoveStakeError, AlgoMinimumEntryStakeError } from '@/ALGO/errors';
-import { CouldNotBroadcastTx, CouldNotCraftTx, CouldNotPrepareTx } from '@/app/errors';
+import {
+  CouldNotBroadcastTx,
+  CouldNotCraftTx,
+  CouldNotFindTxStatus,
+  CouldNotGetTxStatus,
+  CouldNotPrepareTx,
+} from '@/app/errors';
 
 export default class AlgoService {
   private readonly utils: AlgoUtils;
@@ -269,6 +275,28 @@ export default class AlgoService {
       return { tx_id: result.txid };
     } catch (err) {
       throw new CouldNotBroadcastTx(err);
+    }
+  }
+
+  /**
+   * Get the status of a transaction
+   */
+  public async txStatus(tx_id: string): Promise<{
+    status: 'success' | 'pending_confirmation';
+    info: algosdk.indexerModels.TransactionResponse;
+  }> {
+    try {
+      const algorandClient = this.utils.getClient();
+      const txInfo = await algorandClient.client.indexer.lookupTransactionByID(tx_id).do();
+
+      const status = txInfo.transaction.confirmedRound ? 'success' : 'pending_confirmation';
+
+      return {
+        status,
+        info: txInfo,
+      };
+    } catch (err) {
+      throw new CouldNotGetTxStatus(err);
     }
   }
 }
