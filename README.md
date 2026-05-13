@@ -18,17 +18,23 @@ These scripts are utilities for crafting raw transactions across multiple blockc
 - Cardano (ADA)
 - Cosmos Hub (ATOM)
 - Cronos (CRO)
+- Polkadot (DOT)
 - dYdX Chain (DYDX)
 - Fetch.ai (FET)
 - Injective (INJ)
+- Kava (KAVA)
+- Kusama (KSM)
 - Near (NEAR)
 - Noble (NOBLE)
+- MANTRA (OM)
 - Osmosis (OSMO)
 - Sei (SEI)
 - Solana (SOL)
+- Celestia (TIA)
 - The Open Network (TON)
 - Tron (TRX)
 - Tezos (XTZ)
+- ZetaChain (ZETA)
 
 ### 📦 Installation
 
