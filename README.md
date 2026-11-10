@@ -21,6 +21,7 @@ These scripts are utilities for crafting raw transactions across multiple blockc
 - Polkadot (DOT)
 - dYdX Chain (DYDX)
 - Fetch.ai (FET)
+- Hyperliquid (HYPE)
 - Injective (INJ)
 - Kava (KAVA)
 - Kusama (KSM)
@@ -72,6 +73,31 @@ main();
 ```
 
 The output is a serialized unsigned transaction string, which you can then sign with your preferred signing library or wallet.
+
+#### Hyperliquid (HYPE)
+
+Hyperliquid staking actions are not transactions but EIP-712 messages posted to the Hyperliquid API. Amounts are in wei (10^-8 HYPE).
+
+```ts
+import HypeService from "@/HYPE/HypeService";
+
+const service = new HypeService(); // "mainnet" by default, or "testnet"
+
+const tx = service.craftStakeTx({
+  wallet: "0xYourHyperCoreAddress",
+  validator_address: "0xValidatorAddress",
+  amount_wei: "100000000", // 1 HYPE
+});
+
+// sign tx.typed_data (EIP-712), or tx.unsigned_tx_hash directly, then:
+const { signed_tx_serialized } = await service.prepareTx({
+  unsigned_tx_serialized: tx.unsigned_tx_serialized,
+  signature: { r: "0x...", s: "0x...", v: 27 },
+});
+await service.broadcastTx(signed_tx_serialized);
+```
+
+Staking goes through `craftDepositTx` (spot → staking balance) then `craftStakeTx`; unstaking through `craftUnstakeTx`, then `craftWithdrawTx` (7-day queue), and `craftTransferToEvmTx` to move HYPE back to HyperEVM.
 
 ### 💻 Running from CLI
 
