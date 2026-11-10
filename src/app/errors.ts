@@ -67,6 +67,12 @@ export class CouldNotBroadcastTx extends BaseError {
   }
 }
 
+export class TxRejectedByNetwork extends BaseError {
+  constructor(err: unknown) {
+    super(422, 'The transaction was rejected by the network.', err);
+  }
+}
+
 export class CouldNotCraftTx extends BaseError {
   constructor(err: unknown) {
     super(500, 'An error happened while crafting the transaction.', err);
